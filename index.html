@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Школьный Помощник | Узбекистан 9 класс</title>
+    <meta name="theme-color" content="#4a6fa5">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>📚 Школьный Помощник</h1>
+                <p>Офлайн-помощник для учебников 9 класса (Узбекистан)</p>
+            </div>
+            <button id="themeToggle" class="theme-toggle" title="Переключить тему">🌙</button>
+        </header>
+
+        <!-- ВКЛАДКИ -->
+        <div class="tabs">
+            <button class="tab-button active" data-tab="search">🔍 Поиск</button>
+            <button class="tab-button" data-tab="books">📚 Учебники</button>
+            <button class="tab-button" data-tab="dictionaries">📖 Словари</button>
+        </div>
+
+        <!-- ПОИСК -->
+        <div id="search" class="tab-content active">
+            <div class="controls">
+                <div class="search-box">
+                    <input type="text" id="searchQuery" placeholder="Введите вопрос или ключевые слова..." autocomplete="off">
+                    <button id="searchBtn">🔍 Поиск</button>
+                    <button id="voiceSearchBtn" title="Голосовой поиск">🎤</button>
+                </div>
+                <div class="filter-box">
+                    <label for="subjectFilter">Предмет:</label>
+                    <select id="subjectFilter"><option value="all">Все предметы</option></select>
+                    <label for="languageFilter" style="margin-left: 10px;">Язык:</label>
+                    <select id="languageFilter">
+                        <option value="all">Все языки</option>
+                        <option value="uz">Узбекский</option>
+                        <option value="en">Английский</option>
+                        <option value="ru">Русский</option>
+                    </select>
+                </div>
+                <div class="upload-box">
+                    <input type="file" id="fileInput" multiple accept=".pdf,.txt,.docx" style="display: none;">
+                    <button id="loadFilesBtn">📁 Загрузить учебники</button>
+                    <span id="fileCount">Выбрано: 0 файлов</span>
+                </div>
+                <div class="export-import-box">
+                    <button id="exportJsonBtn">📤 Экспорт в JSON</button>
+                    <button id="importJsonBtn">📥 Импорт из JSON</button>
+                    <input type="file" id="importJsonInput" accept=".json" style="display: none;">
+                </div>
+            </div>
+            <div id="results"><p class="placeholder">Загрузите учебники или выполните поиск...</p></div>
+        </div>
+
+        <!-- УЧЕБНИКИ -->
+        <div id="books" class="tab-content">
+            <div class="books-controls">
+                <div class="search-box">
+                    <input type="text" id="booksSearchQuery" placeholder="Поиск по учебникам..." autocomplete="off">
+                    <button id="booksSearchBtn">🔍 Поиск</button>
+                </div>
+                <div class="filter-box">
+                    <label for="booksSubjectFilter">Предмет:</label>
+                    <select id="booksSubjectFilter"><option value="all">Все предметы</option></select>
+                </div>
+            </div>
+            <div id="booksList"><p class="placeholder">Нет загруженных учебников.</p></div>
+        </div>
+
+        <!-- СЛОВАРИ -->
+        <div id="dictionaries" class="tab-content">
+            <div class="dictionary-tabs">
+                <button class="dictionary-tab active" data-dict-tab="synonyms">🔗 Синонимы</button>
+                <button class="dictionary-tab" data-dict-tab="stopwords">❌ Стоп-слова</button>
+                <button class="dictionary-tab" data-dict-tab="stemming">🔄 Стемминг</button>
+            </div>
+            <div class="dictionary-controls">
+                <div class="filter-box">
+                    <label for="dictLanguageFilter">Язык:</label>
+                    <select id="dictLanguageFilter">
+                        <option value="uz">Узбекский</option>
+                        <option value="en">Английский</option>
+                        <option value="ru">Русский</option>
+                    </select>
+                    <button id="addDictEntryBtn" class="btn-small">➕ Добавить</button>
+                    <button id="loadDictsFromGitHubBtn" class="btn-small">📥 Загрузить с GitHub</button>
+                </div>
+            </div>
+            <div id="dictionariesList"><p class="placeholder">Выберите тип словаря.</p></div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНЫЕ ОКНА -->
+    <div id="subjectModal" class="modal">
+        <div class="modal-content">
+            <h3>Добавить предмет</h3>
+            <input type="text" id="newSubjectInput" placeholder="Например: Математика">
+            <div class="modal-buttons">
+                <button id="cancelSubjectBtn">Отмена</button>
+                <button id="addSubjectBtn">Добавить</button>
+            </div>
+        </div>
+    </div>
+    <div id="dictEntryModal" class="modal">
+        <div class="modal-content">
+            <h3 id="dictEntryModalTitle">Добавить запись</h3>
+            <div id="dictEntryForm"></div>
+            <div class="modal-buttons">
+                <button id="cancelDictEntryBtn">Отмена</button>
+                <button id="saveDictEntryBtn">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="db.js"></script>
+    <script src="search.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
