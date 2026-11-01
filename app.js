@@ -802,7 +802,7 @@ async function loadDictsFromGitHub() {
     showLoadingInTab('dictionaries', 'Загрузка словарей с GitHub...');
 
     try {
-        const dictsUrl = 'https://cdn.jsdelivr.net/gh/your-username/school-assistant-pwa@main/dicts.json';
+        const dictsUrl = 'https://cdn.jsdelivr.net/gh/alpenuga/9E@main/dicts.json';
         const response = await fetch(dictsUrl);
 
         if (!response.ok) {
