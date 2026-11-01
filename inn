@@ -1,0 +1,2773 @@
+Вот **все файлы проекта подряд** с внесёнными правками (включая `dicts.json` и кнопку **"Загрузить с GitHub"**).
+**Скопируйте каждый блок в отдельный файл** с указанным именем.
+
+---
+
+---
+
+---
+
+## **📄 1. `index.html`**
+```html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Школьный Помощник | Узбекистан 9 класс</title>
+    <meta name="theme-color" content="#4a6fa5">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>📚 Школьный Помощник</h1>
+                <p>Офлайн-помощник для учебников 9 класса (Узбекистан)</p>
+            </div>
+            <button id="themeToggle" class="theme-toggle" title="Переключить тему">🌙</button>
+        </header>
+
+        <!-- ВКЛАДКИ -->
+        <div class="tabs">
+            <button class="tab-button active" data-tab="search">🔍 Поиск</button>
+            <button class="tab-button" data-tab="books">📚 Учебники</button>
+            <button class="tab-button" data-tab="dictionaries">📖 Словари</button>
+        </div>
+
+        <!-- ПОИСК -->
+        <div id="search" class="tab-content active">
+            <div class="controls">
+                <div class="search-box">
+                    <input type="text" id="searchQuery" placeholder="Введите вопрос или ключевые слова..." autocomplete="off">
+                    <button id="searchBtn">🔍 Поиск</button>
+                    <button id="voiceSearchBtn" title="Голосовой поиск">🎤</button>
+                </div>
+                <div class="filter-box">
+                    <label for="subjectFilter">Предмет:</label>
+                    <select id="subjectFilter"><option value="all">Все предметы</option></select>
+                    <label for="languageFilter" style="margin-left: 10px;">Язык:</label>
+                    <select id="languageFilter">
+                        <option value="all">Все языки</option>
+                        <option value="uz">Узбекский</option>
+                        <option value="en">Английский</option>
+                        <option value="ru">Русский</option>
+                    </select>
+                </div>
+                <div class="upload-box">
+                    <input type="file" id="fileInput" multiple accept=".pdf,.txt,.docx" style="display: none;">
+                    <button id="loadFilesBtn">📁 Загрузить учебники</button>
+                    <span id="fileCount">Выбрано: 0 файлов</span>
+                </div>
+                <div class="export-import-box">
+                    <button id="exportJsonBtn">📤 Экспорт в JSON</button>
+                    <button id="importJsonBtn">📥 Импорт из JSON</button>
+                    <input type="file" id="importJsonInput" accept=".json" style="display: none;">
+                </div>
+            </div>
+            <div id="results"><p class="placeholder">Загрузите учебники или выполните поиск...</p></div>
+        </div>
+
+        <!-- УЧЕБНИКИ -->
+        <div id="books" class="tab-content">
+            <div class="books-controls">
+                <div class="search-box">
+                    <input type="text" id="booksSearchQuery" placeholder="Поиск по учебникам..." autocomplete="off">
+                    <button id="booksSearchBtn">🔍 Поиск</button>
+                </div>
+                <div class="filter-box">
+                    <label for="booksSubjectFilter">Предмет:</label>
+                    <select id="booksSubjectFilter"><option value="all">Все предметы</option></select>
+                </div>
+            </div>
+            <div id="booksList"><p class="placeholder">Нет загруженных учебников.</p></div>
+        </div>
+
+        <!-- СЛОВАРИ -->
+        <div id="dictionaries" class="tab-content">
+            <div class="dictionary-tabs">
+                <button class="dictionary-tab active" data-dict-tab="synonyms">🔗 Синонимы</button>
+                <button class="dictionary-tab" data-dict-tab="stopwords">❌ Стоп-слова</button>
+                <button class="dictionary-tab" data-dict-tab="stemming">🔄 Стемминг</button>
+            </div>
+            <div class="dictionary-controls">
+                <div class="filter-box">
+                    <label for="dictLanguageFilter">Язык:</label>
+                    <select id="dictLanguageFilter">
+                        <option value="uz">Узбекский</option>
+                        <option value="en">Английский</option>
+                        <option value="ru">Русский</option>
+                    </select>
+                    <button id="addDictEntryBtn" class="btn-small">➕ Добавить</button>
+                    <button id="loadDictsFromGitHubBtn" class="btn-small">📥 Загрузить с GitHub</button>
+                </div>
+            </div>
+            <div id="dictionariesList"><p class="placeholder">Выберите тип словаря.</p></div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНЫЕ ОКНА -->
+    <div id="subjectModal" class="modal">
+        <div class="modal-content">
+            <h3>Добавить предмет</h3>
+            <input type="text" id="newSubjectInput" placeholder="Например: Математика">
+            <div class="modal-buttons">
+                <button id="cancelSubjectBtn">Отмена</button>
+                <button id="addSubjectBtn">Добавить</button>
+            </div>
+        </div>
+    </div>
+    <div id="dictEntryModal" class="modal">
+        <div class="modal-content">
+            <h3 id="dictEntryModalTitle">Добавить запись</h3>
+            <div id="dictEntryForm"></div>
+            <div class="modal-buttons">
+                <button id="cancelDictEntryBtn">Отмена</button>
+                <button id="saveDictEntryBtn">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="db.js"></script>
+    <script src="search.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
+```
+
+---
+
+---
+
+## **📄 2. `manifest.json`**
+```json
+{
+    "name": "Школьный Помощник",
+    "short_name": "Помощник",
+    "description": "Офлайн-помощник для учебников 9 класса (Узбекистан) с поддержкой узбекского и английского",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#f5f5f5",
+    "theme_color": "#4a6fa5",
+    "icons": [
+        {
+            "src": "assets/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "assets/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "lang": "ru"
+}
+```
+
+---
+
+---
+
+## **📄 3. `sw.js`**
+```javascript
+const CACHE_NAME = 'school-assistant-v4';
+const BASE_URL = self.location.pathname.replace(/[^\/]+$/, '');
+
+const ASSETS_TO_CACHE = [
+    BASE_URL,
+    BASE_URL + 'index.html',
+    BASE_URL + 'styles.css',
+    BASE_URL + 'app.js',
+    BASE_URL + 'db.js',
+    BASE_URL + 'search.js',
+    BASE_URL + 'dicts.json',
+    BASE_URL + 'manifest.json',
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js'
+];
+
+self.addEventListener('install', (event) => {
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+            .then((cache) => cache.addAll(ASSETS_TO_CACHE))
+    );
+});
+
+self.addEventListener('fetch', (event) => {
+    event.respondWith(
+        caches.match(event.request)
+            .then((response) => response || fetch(event.request))
+    );
+});
+
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cacheName) => {
+                    if (cacheName !== CACHE_NAME) {
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        })
+    );
+});
+```
+
+---
+
+---
+
+## **📄 4. `db.js`**
+```javascript
+const DB_NAME = 'SchoolAssistantDB';
+const DB_VERSION = 4;
+
+let db;
+const dbPromise = new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+    request.onupgradeneeded = (event) => {
+        db = event.target.result;
+
+        if (!db.objectStoreNames.contains('books')) {
+            const booksStore = db.createObjectStore('books', { keyPath: 'id', autoIncrement: true });
+            booksStore.createIndex('title', 'title', { unique: false });
+            booksStore.createIndex('subject', 'subject', { unique: false });
+        }
+
+        if (!db.objectStoreNames.contains('paragraphs')) {
+            const paragraphsStore = db.createObjectStore('paragraphs', { keyPath: 'id', autoIncrement: true });
+            paragraphsStore.createIndex('bookId', 'bookId', { unique: false });
+            paragraphsStore.createIndex('subject', 'subject', { unique: false });
+        }
+
+        if (!db.objectStoreNames.contains('subjects')) {
+            db.createObjectStore('subjects', { keyPath: 'name', unique: true });
+        }
+
+        if (!db.objectStoreNames.contains('synonyms')) {
+            const synonymsStore = db.createObjectStore('synonyms', { keyPath: 'id', autoIncrement: true });
+            synonymsStore.createIndex('term', 'term', { unique: false });
+            synonymsStore.createIndex('language', 'language', { unique: false });
+        }
+
+        if (!db.objectStoreNames.contains('stopwords')) {
+            const stopwordsStore = db.createObjectStore('stopwords', { keyPath: 'id', autoIncrement: true });
+            stopwordsStore.createIndex('term', 'term', { unique: false });
+            stopwordsStore.createIndex('language', 'language', { unique: false });
+        }
+
+        if (!db.objectStoreNames.contains('stemming_rules')) {
+            const stemmingStore = db.createObjectStore('stemming_rules', { keyPath: 'id', autoIncrement: true });
+            stemmingStore.createIndex('term', 'term', { unique: false });
+            stemmingStore.createIndex('language', 'language', { unique: false });
+        }
+    };
+
+    request.onsuccess = () => {
+        db = request.result;
+        resolve(db);
+    };
+    request.onerror = () => reject(request.error);
+});
+
+// === УЧЕБНИКИ ===
+async function addBook(title, subject, content, filePath = null) {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('books', 'readwrite');
+        const store = transaction.objectStore('books');
+        const book = { title, subject, content, filePath, timestamp: Date.now() };
+        const request = store.add(book);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function getAllBooks() {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('books', 'readonly');
+        const store = transaction.objectStore('books');
+        const request = store.getAll();
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function deleteBook(id) {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('books', 'readwrite');
+        const store = transaction.objectStore('books');
+        const request = store.delete(id);
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+}
+
+// === ПАРАГРАФЫ ===
+async function addParagraph(bookId, subject, content) {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('paragraphs', 'readwrite');
+        const store = transaction.objectStore('paragraphs');
+        const paragraph = { bookId, subject, content, timestamp: Date.now() };
+        const request = store.add(paragraph);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function getAllParagraphs() {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('paragraphs', 'readonly');
+        const store = transaction.objectStore('paragraphs');
+        const request = store.getAll();
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function deleteParagraph(id) {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('paragraphs', 'readwrite');
+        const store = transaction.objectStore('paragraphs');
+        const request = store.delete(id);
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function deleteParagraphsByBookId(bookId) {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('paragraphs', 'readwrite');
+        const store = transaction.objectStore('paragraphs');
+        const index = store.index('bookId');
+        const request = index.openCursor(IDBKeyRange.only(bookId));
+        request.onsuccess = (event) => {
+            const cursor = event.target.result;
+            if (cursor) {
+                cursor.delete();
+                cursor.continue();
+            } else {
+                resolve();
+            }
+        };
+        request.onerror = () => reject(request.error);
+    });
+}
+
+// === ПРЕДМЕТЫ ===
+async function addSubject(name) {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('subjects', 'readwrite');
+        const store = transaction.objectStore('subjects');
+        const request = store.add({ name });
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function getAllSubjects() {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('subjects', 'readonly');
+        const store = transaction.objectStore('subjects');
+        const request = store.getAll();
+        request.onsuccess = () => resolve(request.result.map(s => s.name));
+        request.onerror = () => reject(request.error);
+    });
+}
+
+// === СИНОНИМЫ ===
+async function addSynonym(term, synonyms, language = 'ru') {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('synonyms', 'readwrite');
+        const store = transaction.objectStore('synonyms');
+        const request = store.add({ term, synonyms, language, timestamp: Date.now() });
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function getSynonyms(language = 'ru') {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('synonyms', 'readonly');
+        const store = transaction.objectStore('synonyms');
+        const index = store.index('language');
+        const request = index.getAll(language);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function getSynonymById(id) {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('synonyms', 'readonly');
+        const store = transaction.objectStore('synonyms');
+        const request = store.get(id);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function updateSynonym(id, term, synonyms, language) {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('synonyms', 'readwrite');
+        const store = transaction.objectStore('synonyms');
+        const request = store.put({ id, term, synonyms, language, timestamp: Date.now() });
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function deleteSynonym(id) {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('synonyms', 'readwrite');
+        const store = transaction.objectStore('synonyms');
+        const request = store.delete(id);
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+}
+
+// === СТОП-СЛОВА ===
+async function addStopword(term, language = 'ru') {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('stopwords', 'readwrite');
+        const store = transaction.objectStore('stopwords');
+        const request = store.add({ term, language, timestamp: Date.now() });
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function getStopwords(language = 'ru') {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('stopwords', 'readonly');
+        const store = transaction.objectStore('stopwords');
+        const index = store.index('language');
+        const request = index.getAll(language);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function getStopwordById(id) {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('stopwords', 'readonly');
+        const store = transaction.objectStore('stopwords');
+        const request = store.get(id);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function updateStopword(id, term, language) {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('stopwords', 'readwrite');
+        const store = transaction.objectStore('stopwords');
+        const request = store.put({ id, term, language, timestamp: Date.now() });
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function deleteStopword(id) {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('stopwords', 'readwrite');
+        const store = transaction.objectStore('stopwords');
+        const request = store.delete(id);
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+}
+
+// === ПРАВИЛА СТЕММИНГА ===
+async function addStemmingRule(term, stem, language = 'ru') {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('stemming_rules', 'readwrite');
+        const store = transaction.objectStore('stemming_rules');
+        const request = store.add({ term, stem, language, timestamp: Date.now() });
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function getStemmingRules(language = 'ru') {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('stemming_rules', 'readonly');
+        const store = transaction.objectStore('stemming_rules');
+        const index = store.index('language');
+        const request = index.getAll(language);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function getStemmingRuleById(id) {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('stemming_rules', 'readonly');
+        const store = transaction.objectStore('stemming_rules');
+        const request = store.get(id);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function updateStemmingRule(id, term, stem, language) {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('stemming_rules', 'readwrite');
+        const store = transaction.objectStore('stemming_rules');
+        const request = store.put({ id, term, stem, language, timestamp: Date.now() });
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function deleteStemmingRule(id) {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('stemming_rules', 'readwrite');
+        const store = transaction.objectStore('stemming_rules');
+        const request = store.delete(id);
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+}
+
+// === ЭКСПОРТ/ИМПОРТ ===
+async function exportToJson() {
+    try {
+        const books = await getAllBooks();
+        const subjects = await getAllSubjects();
+        const paragraphs = await getAllParagraphs();
+        const synonyms = await getAllSynonyms();
+        const stopwords = await getAllStopwords();
+        const stemmingRules = await getAllStemmingRules();
+        return JSON.stringify({ books, subjects, paragraphs, synonyms, stopwords, stemmingRules }, null, 2);
+    } catch (error) {
+        console.error('Ошибка при экспорте:', error);
+        throw error;
+    }
+}
+
+async function importFromJson(jsonString) {
+    const data = JSON.parse(jsonString);
+    const transaction = db.transaction(
+        ['books', 'subjects', 'paragraphs', 'synonyms', 'stopwords', 'stemming_rules'],
+        'readwrite'
+    );
+    const booksStore = transaction.objectStore('books');
+    const subjectsStore = transaction.objectStore('subjects');
+    const paragraphsStore = transaction.objectStore('paragraphs');
+    const synonymsStore = transaction.objectStore('synonyms');
+    const stopwordsStore = transaction.objectStore('stopwords');
+    const stemmingStore = transaction.objectStore('stemming_rules');
+
+    await clearAllBooks();
+    await clearAllSubjects();
+    await clearAllParagraphs();
+    await clearAllSynonyms();
+    await clearAllStopwords();
+    await clearAllStemmingRules();
+
+    data.subjects?.forEach(subject => subjectsStore.add({ name: subject }));
+    data.books?.forEach(book => booksStore.add(book));
+    data.paragraphs?.forEach(paragraph => paragraphsStore.add(paragraph));
+    data.synonyms?.forEach(syn => synonymsStore.add(syn));
+    data.stopwords?.forEach(sw => stopwordsStore.add(sw));
+    data.stemmingRules?.forEach(rule => stemmingStore.add(rule));
+
+    return new Promise((resolve, reject) => {
+        transaction.oncomplete = () => resolve();
+        transaction.onerror = () => reject(transaction.error);
+    });
+}
+
+async function getAllSynonyms() {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('synonyms', 'readonly');
+        const store = transaction.objectStore('synonyms');
+        const request = store.getAll();
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function getAllStopwords() {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('stopwords', 'readonly');
+        const store = transaction.objectStore('stopwords');
+        const request = store.getAll();
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function getAllStemmingRules() {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('stemming_rules', 'readonly');
+        const store = transaction.objectStore('stemming_rules');
+        const request = store.getAll();
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function clearAllBooks() {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('books', 'readwrite');
+        const store = transaction.objectStore('books');
+        const request = store.clear();
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function clearAllSubjects() {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('subjects', 'readwrite');
+        const store = transaction.objectStore('subjects');
+        const request = store.clear();
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function clearAllParagraphs() {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('paragraphs', 'readwrite');
+        const store = transaction.objectStore('paragraphs');
+        const request = store.clear();
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function clearAllSynonyms() {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('synonyms', 'readwrite');
+        const store = transaction.objectStore('synonyms');
+        const request = store.clear();
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function clearAllStopwords() {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('stopwords', 'readwrite');
+        const store = transaction.objectStore('stopwords');
+        const request = store.clear();
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function clearAllStemmingRules() {
+    await dbPromise;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('stemming_rules', 'readwrite');
+        const store = transaction.objectStore('stemming_rules');
+        const request = store.clear();
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+}
+
+// Импорт только словарей из JSON
+async function importDictionariesFromJson(jsonString) {
+    const data = JSON.parse(jsonString);
+    const transaction = db.transaction(
+        ['synonyms', 'stopwords', 'stemming_rules'],
+        'readwrite'
+    );
+    const synonymsStore = transaction.objectStore('synonyms');
+    const stopwordsStore = transaction.objectStore('stopwords');
+    const stemmingStore = transaction.objectStore('stemming_rules');
+
+    await clearAllSynonyms();
+    await clearAllStopwords();
+    await clearAllStemmingRules();
+
+    data.synonyms?.forEach(syn => synonymsStore.add(syn));
+    data.stopwords?.forEach(sw => stopwordsStore.add(sw));
+    data.stemming_rules?.forEach(rule => stemmingStore.add(rule));
+
+    return new Promise((resolve, reject) => {
+        transaction.oncomplete = () => resolve();
+        transaction.onerror = () => reject(transaction.error);
+    });
+}
+```
+
+---
+
+---
+
+## **📄 5. `search.js`**
+```javascript
+// === Porter Stemmer (для английского) ===
+function isVowel(char) {
+    return ['a', 'e', 'i', 'o', 'u'].includes(char.toLowerCase());
+}
+
+function containsVowel(str) {
+    for (let i = 0; i < str.length; i++) {
+        if (isVowel(str[i])) return true;
+    }
+    return false;
+}
+
+function porterStemmer(word) {
+    if (word.length < 3) return word;
+
+    // Шаг 1a
+    if (word.endsWith('sses')) return word.slice(0, -4) + 'ss';
+    if (word.endsWith('ies')) return word.slice(0, -3) + 'i';
+    if (word.endsWith('ss')) return word;
+    if (word.endsWith('s')) return word.slice(0, -1);
+
+    // Шаг 1b
+    if (word.endsWith('eed')) {
+        if (word.slice(-4, -3) === word.slice(-3, -2)) return word.slice(0, -1);
+        return word;
+    }
+    if (word.endsWith('ed') || word.endsWith('ing')) {
+        const stem = word.endsWith('ed') ? word.slice(0, -2) : word.slice(0, -3);
+        if (containsVowel(stem)) return stem;
+        return word;
+    }
+
+    // Шаг 1c
+    if (word.endsWith('y') && word.length > 2 && !isVowel(word.slice(-2, -1))) {
+        return word.slice(0, -1) + 'i';
+    }
+
+    // Шаг 2
+    if (word.endsWith('ational')) return word.slice(0, -7) + 'ate';
+    if (word.endsWith('tional')) return word.slice(0, -6) + 'tion';
+    if (word.endsWith('enci')) return word.slice(0, -5) + 'ence';
+    if (word.endsWith('anci')) return word.slice(0, -5) + 'ance';
+    if (word.endsWith('izer')) return word.slice(0, -5) + 'ize';
+    if (word.endsWith('abli')) return word.slice(0, -5) + 'able';
+    if (word.endsWith('alli')) return word.slice(0, -5) + 'al';
+    if (word.endsWith('entli')) return word.slice(0, -5) + 'ent';
+    if (word.endsWith('eli')) return word.slice(0, -3) + 'e';
+    if (word.endsWith('ousli')) return word.slice(0, -5) + 'ous';
+    if (word.endsWith('ization')) return word.slice(0, -7) + 'ize';
+    if (word.endsWith('ation')) return word.slice(0, -5) + 'ate';
+    if (word.endsWith('ator')) return word.slice(0, -4) + 'ate';
+    if (word.endsWith('alism')) return word.slice(0, -5) + 'al';
+    if (word.endsWith('iveness')) return word.slice(0, -7) + 'ive';
+    if (word.endsWith('fulness')) return word.slice(0, -7) + 'ful';
+    if (word.endsWith('ousness')) return word.slice(0, -7) + 'ous';
+    if (word.endsWith('aliti')) return word.slice(0, -5) + 'al';
+    if (word.endsWith('iviti')) return word.slice(0, -5) + 'ive';
+    if (word.endsWith('biliti')) return word.slice(0, -6) + 'ble';
+
+    // Шаг 3
+    if (word.endsWith('icate')) return word.slice(0, -5) + 'ic';
+    if (word.endsWith('ative')) return word.slice(0, -5);
+    if (word.endsWith('alize')) return word.slice(0, -5) + 'al';
+    if (word.endsWith('iciti')) return word.slice(0, -5) + 'ic';
+    if (word.endsWith('ical')) return word.slice(0, -4) + 'ic';
+    if (word.endsWith('ful')) return word.slice(0, -3);
+    if (word.endsWith('ness')) return word.slice(0, -4);
+
+    // Шаг 4
+    if (word.endsWith('al') && word.length > 3) return word.slice(0, -2);
+    if (word.endsWith('ance') || word.endsWith('ence')) return word.slice(0, -4);
+    if (word.endsWith('er') || word.endsWith('ic')) return word.slice(0, -2);
+    if (word.endsWith('able') || word.endsWith('ible')) return word.slice(0, -4);
+    if (word.endsWith('ant') || word.endsWith('ement') || word.endsWith('ment')) return word.slice(0, -3);
+    if (word.endsWith('ion') && (word.endsWith('sion') || word.endsWith('tion'))) return word.slice(0, -3);
+    if (word.endsWith('ion')) return word.slice(0, -3);
+
+    // Шаг 5
+    if (word.endsWith('e') && word.length > 3) {
+        const stem = word.slice(0, -1);
+        if (containsVowel(stem.slice(0, -1))) return stem;
+        return word;
+    }
+
+    // Шаг 6
+    if (word.endsWith('l') && word.length > 3 && word.slice(-2, -1) === 'l') {
+        return word.slice(0, -1);
+    }
+
+    return word;
+}
+
+// === Uzbek Stemmer ===
+function uzbekStemmer(word) {
+    word = word.toLowerCase();
+
+    // Удаляем окончания множественного числа (кириллица)
+    if (word.endsWith('лар') || word.endsWith('лер')) return word.slice(0, -3);
+
+    // Удаляем окончания множественного числа (латиница)
+    if (word.endsWith('lar') || word.endsWith('ler')) return word.slice(0, -3);
+
+    // Удаляем окончания притяжательных местоимений
+    if (word.endsWith('ним') || word.endsWith('нимга') || word.endsWith('нимни')) return word.slice(0, -3);
+    if (word.endsWith('нинг') || word.endsWith('ning')) return word.slice(0, -4);
+
+    // Удаляем окончания падежей
+    if (word.endsWith('га') || word.endsWith('да') || word.endsWith('ка') ||
+        word.endsWith('ga') || word.endsWith('da') || word.endsWith('ka')) {
+        return word.slice(0, -2);
+    }
+    if (word.endsWith('ни') || word.endsWith('ni')) return word.slice(0, -2);
+    if (word.endsWith('билан') || word.endsWith('bilan') || word.endsWith('ва') || word.endsWith('va')) {
+        return word.slice(0, -5);
+    }
+    if (word.endsWith('де') || word.endsWith('да') || word.endsWith('de') || word.endsWith('da')) {
+        return word.slice(0, -2);
+    }
+    if (word.endsWith('дан') || word.endsWith('тан') || word.endsWith('чан') ||
+        word.endsWith('dan') || word.endsWith('tan') || word.endsWith('chan')) {
+        return word.slice(0, -3);
+    }
+    if (word.endsWith('гача') || word.endsWith('кача') ||
+        word.endsWith('gacha') || word.endsWith('kacha')) {
+        return word.slice(0, -4);
+    }
+
+    // Удаляем окончания причастий
+    if (word.endsWith('ган') || word.endsWith('кан') || word.endsWith('ганлар') ||
+        word.endsWith('gan') || word.endsWith('kan') || word.endsWith('ganlar')) {
+        return word.slice(0, -3);
+    }
+    if (word.endsWith('гувчи') || word.endsWith('кувчи') ||
+        word.endsWith('guvchi') || word.endsWith('kuvchi')) {
+        return word.slice(0, -5);
+    }
+
+    return word;
+}
+
+// === Класс BM25 для параграфов с поддержкой языков ===
+class ParagraphBM25 {
+    constructor(k1 = 1.5, b = 0.75) {
+        this.k1 = k1;
+        this.b = b;
+        this.paragraphs = [];
+        this.termDocFreq = new Map();
+        this.termFreq = [];
+        this.docLengths = [];
+        this.avgDocLength = 0;
+        this.totalDocs = 0;
+        this.stopwords = new Map();
+        this.synonyms = new Map();
+        this.stemmingRules = new Map();
+    }
+
+    // Загрузка словарей
+    async loadDictionaries() {
+        const languages = ['uz', 'en', 'ru'];
+        for (const lang of languages) {
+            const stopwords = await getStopwords(lang);
+            this.stopwords.set(lang, new Set(stopwords.map(sw => sw.term.toLowerCase())));
+
+            const synonyms = await getSynonyms(lang);
+            const synMap = new Map();
+            synonyms.forEach(syn => synMap.set(syn.term.toLowerCase(), syn.synonyms));
+            this.synonyms.set(lang, synMap);
+
+            const stemmingRules = await getStemmingRules(lang);
+            const stemMap = new Map();
+            stemmingRules.forEach(rule => stemMap.set(rule.term.toLowerCase(), rule.stem));
+            this.stemmingRules.set(lang, stemMap);
+        }
+    }
+
+    // Определение языка текста
+    detectLanguage(text) {
+        const uzbekCyrillic = /[а-яёЁҒғШшЪъЭэҲҳЧчҶҷ]/i;
+        const uzbekLatin = /[a-zA-ZöÖğĞşŞçÇüÜıİ]/i;
+        const english = /[a-zA-Z]/;
+        const russian = /[а-яА-Я]/;
+
+        if (uzbekCyrillic.test(text) || uzbekLatin.test(text)) return 'uz';
+        if (english.test(text) && !russian.test(text)) return 'en';
+        return 'ru';
+    }
+
+    // Токенизация текста
+    tokenize(text, language = null) {
+        const detectedLanguage = language || this.detectLanguage(text);
+        const stopwords = this.stopwords.get(detectedLanguage) || new Set();
+        const stemmingRules = this.stemmingRules.get(detectedLanguage) || new Map();
+
+        return text.toLowerCase()
+            .split(/\s+/)
+            .map(term => term.replace(/[^\wа-яА-ЯёЁҒғШшЪъЭэҲҳЧчҶҷöÖğĞşŞçÇüÜıİ]/g, ''))
+            .filter(term => term.length > 2)
+            .map(term => {
+                if (detectedLanguage === 'en') return porterStemmer(term);
+                if (detectedLanguage === 'uz') return uzbekStemmer(term);
+                return term;
+            })
+            .map(term => stemmingRules.get(term) || term)
+            .filter(term => !stopwords.has(term));
+    }
+
+    // Расширение запроса синонимами
+    expandQuery(query, language = null) {
+        const detectedLanguage = language || this.detectLanguage(query);
+        const synonyms = this.synonyms.get(detectedLanguage) || new Map();
+        const queryTerms = this.tokenize(query, detectedLanguage);
+        const expandedTerms = [...queryTerms];
+
+        queryTerms.forEach(term => {
+            const termSynonyms = synonyms.get(term);
+            if (termSynonyms) {
+                expandedTerms.push(...termSynonyms.map(syn => this.tokenize(syn, detectedLanguage)).flat());
+            }
+        });
+
+        return [...new Set(expandedTerms)];
+    }
+
+    // Добавить параграф в индекс
+    addParagraph(paragraph) {
+        const tokens = this.tokenize(paragraph.content);
+        this.paragraphs.push(paragraph);
+        this.docLengths.push(tokens.length);
+
+        const docTermFreq = new Map();
+        tokens.forEach(term => {
+            docTermFreq.set(term, (docTermFreq.get(term) || 0) + 1);
+        });
+        this.termFreq.push(docTermFreq);
+
+        tokens.forEach(term => {
+            this.termDocFreq.set(term, (this.termDocFreq.get(term) || 0) + 1);
+        });
+
+        this.totalDocs = this.paragraphs.length;
+        this.avgDocLength = this.docLengths.reduce((sum, len) => sum + len, 0) / this.totalDocs;
+    }
+
+    // Поиск по запросу
+    search(query, topN = 10) {
+        const expandedQuery = this.expandQuery(query);
+        if (expandedQuery.length === 0) return [];
+
+        const scores = this.paragraphs.map((paragraph, docIndex) => {
+            let score = 0;
+            expandedQuery.forEach(term => {
+                const tf = this.termFreq[docIndex].get(term) || 0;
+                const idf = this.idf(term);
+                const numerator = tf * (this.k1 + 1);
+                const denominator = tf + this.k1 * (1 - this.b + this.b * this.docLengths[docIndex] / this.avgDocLength);
+                score += idf * (numerator / denominator);
+            });
+            return { ...paragraph, score, docIndex };
+        });
+
+        return scores.sort((a, b) => b.score - a.score).slice(0, topN);
+    }
+
+    // Вычисление IDF
+    idf(term) {
+        const docFreq = this.termDocFreq.get(term) || 0;
+        return Math.log((this.totalDocs - docFreq + 0.5) / (docFreq + 0.5) + 1);
+    }
+
+    // Извлечение релевантного фрагмента
+    getRelevantFragment(paragraph, query) {
+        const queryTokens = this.tokenize(query);
+        const sentences = paragraph.content.split(/[.!?]+/);
+        let bestSentence = '';
+        let maxScore = 0;
+
+        sentences.forEach(sentence => {
+            const sentenceTokens = this.tokenize(sentence);
+            const score = queryTokens.filter(term => sentenceTokens.includes(term)).length;
+            if (score > maxScore) {
+                maxScore = score;
+                bestSentence = sentence.trim();
+            }
+        });
+
+        return bestSentence || paragraph.content.substring(0, 200) + '...';
+    }
+}
+
+// === Извлечение текста из PDF/TXT/DOCX ===
+async function extractTextFromPdf(file) {
+    return new Promise((resolve, reject) => {
+        const fileReader = new FileReader();
+        fileReader.onload = async (event) => {
+            try {
+                const typedArray = new Uint8Array(event.target.result);
+                const pdf = await pdfjsLib.getDocument(typedArray).promise;
+                let fullText = '';
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const textContent = await page.getTextContent();
+                    fullText += textContent.items.map(item => item.str).join(' ') + '\n';
+                }
+                resolve(fullText);
+            } catch (error) {
+                reject(error);
+            }
+        };
+        fileReader.onerror = reject;
+        fileReader.readAsArrayBuffer(file);
+    });
+}
+
+async function extractTextFromTxt(file) {
+    return file.text();
+}
+
+async function extractTextFromDocx(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const arrayBuffer = e.target.result;
+            mammoth.extractRawText({ arrayBuffer })
+                .then((result) => resolve(result.value))
+                .catch(reject);
+        };
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(file);
+    });
+}
+```
+
+---
+
+---
+
+## **📄 6. `app.js`**
+```javascript
+// === Глобальные переменные ===
+let allBooks = [];
+let allSubjects = [];
+let allParagraphs = [];
+let paragraphBm25 = new ParagraphBM25();
+let currentSubjectFilter = 'all';
+let currentLanguageFilter = 'all';
+let currentDictTab = 'synonyms';
+let currentDictLanguage = 'uz';
+
+// === Инициализация приложения ===
+document.addEventListener('DOMContentLoaded', async () => {
+    initializeTheme();
+    await loadData();
+    setupEventListeners();
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => console.log('ServiceWorker зарегистрирован:', registration.scope))
+                .catch(error => console.error('Ошибка регистрации ServiceWorker:', error));
+        });
+    }
+});
+
+// === Тема ===
+function initializeTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', initialTheme);
+    updateThemeButton(initialTheme);
+}
+
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateThemeButton(newTheme);
+}
+
+function updateThemeButton(theme) {
+    const button = document.getElementById('themeToggle');
+    button.textContent = theme === 'dark' ? '☀️' : '🌙';
+}
+
+// === Загрузка данных ===
+async function loadData() {
+    try {
+        allBooks = await getAllBooks();
+        allSubjects = await getAllSubjects();
+        allParagraphs = await getAllParagraphs();
+
+        paragraphBm25 = new ParagraphBM25();
+        await paragraphBm25.loadDictionaries();
+        allParagraphs.forEach(paragraph => paragraphBm25.addParagraph(paragraph));
+
+        updateSubjectFilter();
+        updateLanguageFilter();
+        updateDictLanguageFilter();
+    } catch (error) {
+        console.error('Ошибка загрузки данных:', error);
+        showError('Ошибка загрузки данных. Попробуйте перезагрузить страницу.');
+    }
+}
+
+// === Настройка обработчиков ===
+function setupEventListeners() {
+    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+    // Вкладки
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', () => switchTab(button.getAttribute('data-tab')));
+    });
+
+    // Вкладки словарей
+    document.querySelectorAll('.dictionary-tab').forEach(button => {
+        button.addEventListener('click', () => switchDictTab(button.getAttribute('data-dict-tab')));
+    });
+
+    // Поиск
+    document.getElementById('searchBtn').addEventListener('click', performSearch);
+    document.getElementById('searchQuery').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') performSearch();
+    });
+
+    // Фильтры поиска
+    document.getElementById('subjectFilter').addEventListener('change', (e) => {
+        currentSubjectFilter = e.target.value;
+    });
+    document.getElementById('languageFilter').addEventListener('change', (e) => {
+        currentLanguageFilter = e.target.value;
+    });
+
+    // Голосовой поиск
+    document.getElementById('voiceSearchBtn').addEventListener('click', startVoiceSearch);
+
+    // Загрузка файлов
+    document.getElementById('loadFilesBtn').addEventListener('click', () => {
+        document.getElementById('fileInput').click();
+    });
+    document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+
+    // Экспорт/Импорт
+    document.getElementById('exportJsonBtn').addEventListener('click', exportJson);
+    document.getElementById('importJsonBtn').addEventListener('click', () => {
+        document.getElementById('importJsonInput').click();
+    });
+    document.getElementById('importJsonInput').addEventListener('change', handleJsonImport);
+
+    // Учебники
+    document.getElementById('booksSearchBtn').addEventListener('click', performBooksSearch);
+    document.getElementById('booksSearchQuery').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') performBooksSearch();
+    });
+    document.getElementById('booksSubjectFilter').addEventListener('change', performBooksSearch);
+
+    // Словари
+    document.getElementById('dictLanguageFilter').addEventListener('change', (e) => {
+        currentDictLanguage = e.target.value;
+        loadDictionaries();
+    });
+    document.getElementById('addDictEntryBtn').addEventListener('click', () => {
+        openDictEntryModal('add');
+    });
+    document.getElementById('loadDictsFromGitHubBtn').addEventListener('click', loadDictsFromGitHub);
+
+    // Модальные окна
+    document.getElementById('cancelSubjectBtn').addEventListener('click', () => {
+        document.getElementById('subjectModal').style.display = 'none';
+    });
+    document.getElementById('addSubjectBtn').addEventListener('click', addNewSubject);
+    document.getElementById('cancelDictEntryBtn').addEventListener('click', () => {
+        document.getElementById('dictEntryModal').style.display = 'none';
+    });
+    document.getElementById('saveDictEntryBtn').addEventListener('click', saveDictEntry);
+}
+
+// === Вкладки ===
+function switchTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
+    document.getElementById(tabName).classList.add('active');
+    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+    if (tabName === 'books') displayBooks();
+    else if (tabName === 'dictionaries') loadDictionaries();
+}
+
+function switchDictTab(tabName) {
+    currentDictTab = tabName;
+    document.querySelectorAll('.dictionary-tab').forEach(button => button.classList.remove('active'));
+    document.querySelector(`[data-dict-tab="${tabName}"]`).classList.add('active');
+    loadDictionaries();
+}
+
+// === Фильтры ===
+function updateSubjectFilter() {
+    const subjectFilter = document.getElementById('subjectFilter');
+    const booksSubjectFilter = document.getElementById('booksSubjectFilter');
+    subjectFilter.innerHTML = '<option value="all">Все предметы</option>';
+    booksSubjectFilter.innerHTML = '<option value="all">Все предметы</option>';
+    allSubjects.sort().forEach(subject => {
+        const option1 = document.createElement('option');
+        option1.value = subject;
+        option1.textContent = subject;
+        subjectFilter.appendChild(option1);
+
+        const option2 = document.createElement('option');
+        option2.value = subject;
+        option2.textContent = subject;
+        booksSubjectFilter.appendChild(option2);
+    });
+}
+
+function updateLanguageFilter() {
+    const languageFilter = document.getElementById('languageFilter');
+    languageFilter.innerHTML = `
+        <option value="all">Все языки</option>
+        <option value="uz">Узбекский</option>
+        <option value="en">Английский</option>
+        <option value="ru">Русский</option>
+    `;
+}
+
+function updateDictLanguageFilter() {
+    const dictLanguageFilter = document.getElementById('dictLanguageFilter');
+    dictLanguageFilter.innerHTML = `
+        <option value="uz">Узбекский</option>
+        <option value="en">Английский</option>
+        <option value="ru">Русский</option>
+    `;
+    currentDictLanguage = dictLanguageFilter.value;
+}
+
+// === Поиск ===
+async function performSearch() {
+    const query = document.getElementById('searchQuery').value.trim();
+    const resultsContainer = document.getElementById('results');
+
+    if (!query) {
+        showError('Введите запрос для поиска.');
+        return;
+    }
+
+    resultsContainer.innerHTML = '<div class="loading">🔍 Идет поиск...</div>';
+
+    try {
+        let filteredParagraphs = allParagraphs;
+
+        if (currentSubjectFilter !== 'all') {
+            filteredParagraphs = filteredParagraphs.filter(p => p.subject === currentSubjectFilter);
+        }
+
+        if (currentLanguageFilter !== 'all') {
+            filteredParagraphs = filteredParagraphs.filter(p => {
+                const lang = paragraphBm25.detectLanguage(p.content);
+                return lang === currentLanguageFilter;
+            });
+        }
+
+        if (filteredParagraphs.length === 0) {
+            resultsContainer.innerHTML = '<p class="placeholder">Нет параграфов по выбранным фильтрам.</p>';
+            return;
+        }
+
+        const tempBm25 = new ParagraphBM25();
+        await tempBm25.loadDictionaries();
+        filteredParagraphs.forEach(para => tempBm25.addParagraph(para));
+
+        const results = tempBm25.search(query, 20);
+        if (results.length === 0) {
+            resultsContainer.innerHTML = '<p class="placeholder">Ничего не найдено.</p>';
+            return;
+        }
+
+        displayParagraphResults(results);
+    } catch (error) {
+        console.error('Ошибка при поиске:', error);
+        showError('Ошибка при выполнении поиска.');
+    }
+}
+
+function displayParagraphResults(results) {
+    const resultsContainer = document.getElementById('results');
+    let html = '';
+
+    results.forEach(result => {
+        const book = allBooks.find(b => b.id === result.bookId);
+        const bookTitle = book ? book.title : 'Неизвестный учебник';
+        const relevantFragment = paragraphBm25.getRelevantFragment(result, document.getElementById('searchQuery').value.trim());
+        const language = paragraphBm25.detectLanguage(result.content);
+        const languageName = getLanguageName(language);
+
+        html += `
+            <div class="paragraph-card" data-paragraph-id="${result.id}">
+                <div class="paragraph-header">
+                    <div class="paragraph-title">
+                        <h3>${bookTitle}</h3>
+                        <span class="subject-tag">${result.subject}</span>
+                        <span class="language-tag">${languageName}</span>
+                    </div>
+                    <div class="paragraph-score">Рейтинг: ${result.score.toFixed(2)}</div>
+                </div>
+                <div class="paragraph-content">
+                    <p>${highlightText(relevantFragment, document.getElementById('searchQuery').value.trim())}</p>
+                </div>
+                <div class="paragraph-actions">
+                    <button onclick="showFullParagraph(${result.id})" class="btn-small">Читать полностью</button>
+                    <button onclick="showBook(${result.bookId})" class="btn-small">Открыть учебник</button>
+                    <button onclick="deleteParagraph(${result.id})" class="btn-small btn-delete">Удалить</button>
+                </div>
+            </div>
+        `;
+    });
+
+    resultsContainer.innerHTML = html;
+}
+
+// === Учебники ===
+async function displayBooks() {
+    const container = document.getElementById('booksList');
+    let html = '';
+
+    if (allBooks.length === 0) {
+        html = '<p class="placeholder">Нет загруженных учебников.</p>';
+    } else {
+        const filteredBooks = allBooks.filter(book => {
+            const subjectFilter = document.getElementById('booksSubjectFilter').value;
+            const searchQuery = document.getElementById('booksSearchQuery').value.toLowerCase();
+            if (subjectFilter !== 'all' && book.subject !== subjectFilter) return false;
+            if (searchQuery && !book.title.toLowerCase().includes(searchQuery)) return false;
+            return true;
+        });
+
+        if (filteredBooks.length === 0) {
+            html = '<p class="placeholder">Учебники не найдены.</p>';
+        } else {
+            filteredBooks.forEach(book => {
+                const paragraphsCount = allParagraphs.filter(p => p.bookId === book.id).length;
+                html += `
+                    <div class="book-card" data-book-id="${book.id}">
+                        <div class="book-card-header">
+                            <h3 class="book-card-title">${book.title}</h3>
+                            <span class="subject-tag">${book.subject}</span>
+                        </div>
+                        <div class="book-card-info">
+                            <p>Параграфов: ${paragraphsCount}</p>
+                        </div>
+                        <div class="book-card-actions">
+                            <button onclick="showBook(${book.id})" class="btn-small">Открыть</button>
+                            <button onclick="deleteBook(${book.id}, '${book.title}')" class="btn-small btn-delete">Удалить</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+    }
+
+    container.innerHTML = html;
+}
+
+async function performBooksSearch() {
+    displayBooks();
+}
+
+// === Словари ===
+async function loadDictionaries() {
+    try {
+        let data;
+        if (currentDictTab === 'synonyms') data = await getSynonyms(currentDictLanguage);
+        else if (currentDictTab === 'stopwords') data = await getStopwords(currentDictLanguage);
+        else if (currentDictTab === 'stemming') data = await getStemmingRules(currentDictLanguage);
+        displayDictionaries(data);
+    } catch (error) {
+        console.error('Ошибка загрузки словарей:', error);
+        showError('Ошибка загрузки словарей.');
+    }
+}
+
+function displayDictionaries(data) {
+    const container = document.getElementById('dictionariesList');
+    let html = '';
+
+    if (data.length === 0) {
+        html = '<p class="placeholder">Нет записей в этом словаре.</p>';
+    } else {
+        data.forEach(entry => {
+            if (currentDictTab === 'synonyms') {
+                html += `
+                    <div class="dictionary-entry" data-id="${entry.id}" data-type="synonym">
+                        <div class="dictionary-entry-content">
+                            <div class="dictionary-entry-term">${entry.term}</div>
+                            <div class="dictionary-entry-synonyms">Синонимы: ${entry.synonyms.join(', ')}</div>
+                        </div>
+                        <div class="dictionary-entry-actions">
+                            <button onclick="editDictEntry(${entry.id}, 'synonym')" class="btn-small">✏️</button>
+                            <button onclick="deleteDictEntry(${entry.id}, 'synonym')" class="btn-small btn-delete">❌</button>
+                        </div>
+                    </div>
+                `;
+            } else if (currentDictTab === 'stopwords') {
+                html += `
+                    <div class="dictionary-entry" data-id="${entry.id}" data-type="stopword">
+                        <div class="dictionary-entry-content">
+                            <div class="dictionary-entry-term">${entry.term}</div>
+                        </div>
+                        <div class="dictionary-entry-actions">
+                            <button onclick="deleteDictEntry(${entry.id}, 'stopword')" class="btn-small btn-delete">❌</button>
+                        </div>
+                    </div>
+                `;
+            } else if (currentDictTab === 'stemming') {
+                html += `
+                    <div class="dictionary-entry" data-id="${entry.id}" data-type="stemming">
+                        <div class="dictionary-entry-content">
+                            <div class="dictionary-entry-term">${entry.term}</div>
+                            <div class="dictionary-entry-stem">Стем: ${entry.stem}</div>
+                        </div>
+                        <div class="dictionary-entry-actions">
+                            <button onclick="editDictEntry(${entry.id}, 'stemming')" class="btn-small">✏️</button>
+                            <button onclick="deleteDictEntry(${entry.id}, 'stemming')" class="btn-small btn-delete">❌</button>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+    }
+
+    container.innerHTML = html;
+}
+
+// === Работа с записями словарей ===
+function openDictEntryModal(mode, id = null, type = null) {
+    const modal = document.getElementById('dictEntryModal');
+    const title = document.getElementById('dictEntryModalTitle');
+    const form = document.getElementById('dictEntryForm');
+
+    if (mode === 'add') {
+        title.textContent = `Добавить ${getDictTypeName(currentDictTab)}`;
+        if (currentDictTab === 'synonyms') {
+            form.innerHTML = `
+                <div class="form-group">
+                    <label for="dictTermInput">Термин:</label>
+                    <input type="text" id="dictTermInput" placeholder="Введите термин">
+                </div>
+                <div class="form-group">
+                    <label for="dictSynonymsInput">Синонимы (через запятую):</label>
+                    <input type="text" id="dictSynonymsInput" placeholder="синоним1, синоним2">
+                </div>
+            `;
+        } else if (currentDictTab === 'stopwords') {
+            form.innerHTML = `
+                <div class="form-group">
+                    <label for="dictTermInput">Стоп-слово:</label>
+                    <input type="text" id="dictTermInput" placeholder="Введите стоп-слово">
+                </div>
+            `;
+        } else if (currentDictTab === 'stemming') {
+            form.innerHTML = `
+                <div class="form-group">
+                    <label for="dictTermInput">Термин:</label>
+                    <input type="text" id="dictTermInput" placeholder="Введите термин">
+                </div>
+                <div class="form-group">
+                    <label for="dictStemInput">Стем:</label>
+                    <input type="text" id="dictStemInput" placeholder="Введите основу слова">
+                </div>
+            `;
+        }
+    } else if (mode === 'edit' && id && type) {
+        loadDictEntryForEdit(id, type);
+    }
+
+    modal.style.display = 'flex';
+}
+
+async function loadDictEntryForEdit(id, type) {
+    const title = document.getElementById('dictEntryModalTitle');
+    const form = document.getElementById('dictEntryForm');
+    title.textContent = `Редактировать ${getDictTypeName(type)}`;
+
+    try {
+        let entry;
+        if (type === 'synonym') {
+            entry = await getSynonymById(id);
+            form.innerHTML = `
+                <div class="form-group">
+                    <label for="dictTermInput">Термин:</label>
+                    <input type="text" id="dictTermInput" value="${entry.term}">
+                </div>
+                <div class="form-group">
+                    <label for="dictSynonymsInput">Синонимы (через запятую):</label>
+                    <input type="text" id="dictSynonymsInput" value="${entry.synonyms.join(', ')}">
+                </div>
+                <input type="hidden" id="dictEntryId" value="${id}">
+                <input type="hidden" id="dictEntryType" value="${type}">
+            `;
+        } else if (type === 'stopword') {
+            entry = await getStopwordById(id);
+            form.innerHTML = `
+                <div class="form-group">
+                    <label for="dictTermInput">Стоп-слово:</label>
+                    <input type="text" id="dictTermInput" value="${entry.term}">
+                </div>
+                <input type="hidden" id="dictEntryId" value="${id}">
+                <input type="hidden" id="dictEntryType" value="${type}">
+            `;
+        } else if (type === 'stemming') {
+            entry = await getStemmingRuleById(id);
+            form.innerHTML = `
+                <div class="form-group">
+                    <label for="dictTermInput">Термин:</label>
+                    <input type="text" id="dictTermInput" value="${entry.term}">
+                </div>
+                <div class="form-group">
+                    <label for="dictStemInput">Стем:</label>
+                    <input type="text" id="dictStemInput" value="${entry.stem}">
+                </div>
+                <input type="hidden" id="dictEntryId" value="${id}">
+                <input type="hidden" id="dictEntryType" value="${type}">
+            `;
+        }
+    } catch (error) {
+        console.error('Ошибка загрузки записи:', error);
+        showError('Ошибка загрузки записи.');
+    }
+}
+
+function getDictTypeName(type) {
+    const types = {
+        'synonyms': 'синоним',
+        'synonym': 'синоним',
+        'stopwords': 'стоп-слово',
+        'stopword': 'стоп-слово',
+        'stemming': 'правило стемминга',
+        'stemming_rule': 'правило стемминга'
+    };
+    return types[type] || 'запись';
+}
+
+async function saveDictEntry() {
+    const termInput = document.getElementById('dictTermInput');
+    const term = termInput.value.trim();
+    if (!term) {
+        showError('Введите термин.');
+        return;
+    }
+
+    try {
+        if (currentDictTab === 'synonyms') {
+            const synonymsInput = document.getElementById('dictSynonymsInput');
+            const synonyms = synonymsInput.value.split(',').map(s => s.trim()).filter(s => s);
+            if (synonyms.length === 0) {
+                showError('Введите хотя бы один синоним.');
+                return;
+            }
+            const entryId = document.getElementById('dictEntryId')?.value;
+            if (entryId) {
+                await updateSynonym(parseInt(entryId), term, synonyms, currentDictLanguage);
+                showSuccess('Синоним обновлён!');
+            } else {
+                await addSynonym(term, synonyms, currentDictLanguage);
+                showSuccess('Синоним добавлен!');
+            }
+        } else if (currentDictTab === 'stopwords') {
+            const entryId = document.getElementById('dictEntryId')?.value;
+            if (entryId) {
+                await updateStopword(parseInt(entryId), term, currentDictLanguage);
+                showSuccess('Стоп-слово обновлено!');
+            } else {
+                await addStopword(term, currentDictLanguage);
+                showSuccess('Стоп-слово добавлено!');
+            }
+        } else if (currentDictTab === 'stemming') {
+            const stemInput = document.getElementById('dictStemInput');
+            const stem = stemInput.value.trim();
+            if (!stem) {
+                showError('Введите стем.');
+                return;
+            }
+            const entryId = document.getElementById('dictEntryId')?.value;
+            if (entryId) {
+                await updateStemmingRule(parseInt(entryId), term, stem, currentDictLanguage);
+                showSuccess('Правило стемминга обновлено!');
+            } else {
+                await addStemmingRule(term, stem, currentDictLanguage);
+                showSuccess('Правило стемминга добавлено!');
+            }
+        }
+
+        await loadDictionaries();
+        document.getElementById('dictEntryModal').style.display = 'none';
+        paragraphBm25 = new ParagraphBM25();
+        await paragraphBm25.loadDictionaries();
+        allParagraphs.forEach(paragraph => paragraphBm25.addParagraph(paragraph));
+    } catch (error) {
+        console.error('Ошибка сохранения записи:', error);
+        showError('Ошибка сохранения записи: ' + error.message);
+    }
+}
+
+function editDictEntry(id, type) {
+    openDictEntryModal('edit', id, type);
+}
+
+async function deleteDictEntry(id, type) {
+    if (!confirm('Удалить эту запись?')) return;
+    try {
+        if (type === 'synonym') await deleteSynonym(id);
+        else if (type === 'stopword') await deleteStopword(id);
+        else if (type === 'stemming') await deleteStemmingRule(id);
+        showSuccess('Запись удалена.');
+        await loadDictionaries();
+        paragraphBm25 = new ParagraphBM25();
+        await paragraphBm25.loadDictionaries();
+        allParagraphs.forEach(paragraph => paragraphBm25.addParagraph(paragraph));
+    } catch (error) {
+        showError('Ошибка удаления записи: ' + error.message);
+    }
+}
+
+// === Загрузка файлов ===
+async function handleFileUpload(event) {
+    const files = Array.from(event.target.files);
+    if (files.length === 0) return;
+    document.getElementById('fileCount').textContent = `Выбрано: ${files.length} файлов`;
+
+    for (const file of files) {
+        try {
+            let content = '';
+            const fileName = file.name.replace(/\.[^/.]+$/, "");
+
+            if (file.name.endsWith('.pdf')) content = await extractTextFromPdf(file);
+            else if (file.name.endsWith('.txt')) content = await extractTextFromTxt(file);
+            else if (file.name.endsWith('.docx')) content = await extractTextFromDocx(file);
+            else {
+                showError(`Неподдерживаемый формат файла: ${file.name}`);
+                continue;
+            }
+
+            const detectedLanguage = paragraphBm25.detectLanguage(content);
+            let subject = currentSubjectFilter !== 'all' ? currentSubjectFilter : null;
+            if (!subject || !allSubjects.includes(subject)) {
+                subject = prompt(`Введите предмет для учебника "${file.name}" (язык: ${getLanguageName(detectedLanguage)}):`, allSubjects[0] || 'Математика');
+                if (!subject) continue;
+                if (!allSubjects.includes(subject)) {
+                    await addSubject(subject);
+                    allSubjects.push(subject);
+                    updateSubjectFilter();
+                }
+            }
+
+            const bookId = await addBook(fileName, subject, content, file.name);
+            const paragraphs = content.split(/\n\n+/);
+            for (const para of paragraphs) {
+                if (para.trim().length > 20) {
+                    await addParagraph(bookId, subject, para.trim());
+                }
+            }
+            showSuccess(`Учебник "${fileName}" добавлен! (Язык: ${getLanguageName(detectedLanguage)})`);
+        } catch (error) {
+            console.error('Ошибка при загрузке файла:', error);
+            showError(`Ошибка при загрузке файла ${file.name}: ${error.message}`);
+        }
+    }
+
+    await loadData();
+    event.target.value = '';
+    document.getElementById('fileCount').textContent = 'Выбрано: 0 файлов';
+}
+
+// === Просмотр параграфов и книг ===
+async function showFullParagraph(paragraphId) {
+    const paragraph = allParagraphs.find(p => p.id === paragraphId);
+    if (!paragraph) return;
+    const book = allBooks.find(b => b.id === paragraph.bookId);
+    const bookTitle = book ? book.title : 'Неизвестный учебник';
+    const language = paragraphBm25.detectLanguage(paragraph.content);
+    const languageName = getLanguageName(language);
+
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <div class="modal-content modal-large">
+            <h2>${bookTitle}</h2>
+            <p><strong>Предмет:</strong> ${paragraph.subject}</p>
+            <p><strong>Язык:</strong> ${languageName}</p>
+            <div class="paragraph-full-content">
+                <pre>${paragraph.content}</pre>
+            </div>
+            <div class="modal-actions">
+                <button onclick="showBook(${paragraph.bookId})" class="btn-small">Открыть учебник</button>
+                <button onclick="deleteParagraph(${paragraph.id})" class="btn-small btn-delete">Удалить параграф</button>
+                <button onclick="this.closest('.modal').remove()" class="btn-small">Закрыть</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+async function showBook(bookId) {
+    const book = allBooks.find(b => b.id === bookId);
+    if (!book) return;
+    const paragraphs = allParagraphs.filter(p => p.bookId === bookId);
+
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    let html = `
+        <div class="modal-content modal-large">
+            <h2>${book.title}</h2>
+            <p><strong>Предмет:</strong> ${book.subject}</p>
+            <p><strong>Количество параграфов:</strong> ${paragraphs.length}</p>
+            <div class="book-paragraphs">
+    `;
+
+    paragraphs.forEach((para, index) => {
+        const language = paragraphBm25.detectLanguage(para.content);
+        const languageName = getLanguageName(language);
+        html += `
+            <div class="paragraph-card-in-book">
+                <div class="paragraph-header-in-book">
+                    <span class="paragraph-number">Параграф ${index + 1}</span>
+                    <span class="language-tag">${languageName}</span>
+                </div>
+                <div class="paragraph-content-in-book">
+                    <p>${para.content}</p>
+                </div>
+                <div class="paragraph-actions-in-book">
+                    <button onclick="showFullParagraph(${para.id})" class="btn-small">Подробнее</button>
+                    <button onclick="deleteParagraph(${para.id})" class="btn-small btn-delete">Удалить</button>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `
+            </div>
+            <div class="modal-actions">
+                <button onclick="deleteBook(${book.id}, '${book.title}')" class="btn-small btn-delete">Удалить учебник</button>
+                <button onclick="this.closest('.modal').remove()" class="btn-small">Закрыть</button>
+            </div>
+        </div>
+    `;
+    modal.innerHTML = html;
+    document.body.appendChild(modal);
+}
+
+// === Удаление ===
+async function deleteParagraph(paragraphId) {
+    if (!confirm('Удалить этот параграф?')) return;
+    try {
+        await deleteParagraph(paragraphId);
+        showSuccess('Параграф удалён.');
+        await loadData();
+        const activeTab = document.querySelector('.tab-content.active');
+        if (activeTab.id === 'search') performSearch();
+        else if (activeTab.id === 'books') displayBooks();
+    } catch (error) {
+        showError('Ошибка удаления параграфа: ' + error.message);
+    }
+}
+
+async function deleteBook(bookId, bookTitle) {
+    if (!confirm(`Удалить учебник "${bookTitle}" и все его параграфы?`)) return;
+    try {
+        await deleteParagraphsByBookId(bookId);
+        await deleteBook(bookId);
+        showSuccess(`Учебник "${bookTitle}" и все его параграфы удалены.`);
+        await loadData();
+        const activeTab = document.querySelector('.tab-content.active');
+        if (activeTab.id === 'search') performSearch();
+        else if (activeTab.id === 'books') displayBooks();
+    } catch (error) {
+        showError('Ошибка удаления учебника: ' + error.message);
+    }
+}
+
+// === Предметы ===
+async function addNewSubject() {
+    const subjectName = document.getElementById('newSubjectInput').value.trim();
+    if (!subjectName) {
+        showError('Введите название предмета.');
+        return;
+    }
+    if (allSubjects.includes(subjectName)) {
+        showError('Этот предмет уже существует.');
+        return;
+    }
+    try {
+        await addSubject(subjectName);
+        allSubjects.push(subjectName);
+        updateSubjectFilter();
+        document.getElementById('subjectModal').style.display = 'none';
+        document.getElementById('newSubjectInput').value = '';
+        showSuccess(`Предмет "${subjectName}" добавлен!`);
+    } catch (error) {
+        showError('Ошибка при добавлении предмета: ' + error.message);
+    }
+}
+
+// === Экспорт/Импорт ===
+async function exportJson() {
+    try {
+        const jsonData = await exportToJson();
+        const blob = new Blob([jsonData], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `school_assistant_${new Date().toISOString().slice(0, 10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showSuccess('Экспорт завершён!');
+    } catch (error) {
+        console.error('Ошибка при экспорте:', error);
+        showError('Ошибка при экспорте данных.');
+    }
+}
+
+async function handleJsonImport(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    try {
+        const jsonData = await file.text();
+        await importFromJson(jsonData);
+        showSuccess('Импорт завершён! Данные обновлены.');
+        await loadData();
+    } catch (error) {
+        console.error('Ошибка при импорте:', error);
+        showError('Ошибка при импорте данных: ' + error.message);
+    }
+    event.target.value = '';
+}
+
+// === Загрузка словарей с GitHub ===
+async function loadDictsFromGitHub() {
+    const confirmLoad = confirm('Загрузить стандартные словари с GitHub? Это перезапишет текущие словари (синонимы, стоп-слова, стемминг).');
+    if (!confirmLoad) return;
+
+    showLoadingInTab('dictionaries', 'Загрузка словарей с GitHub...');
+
+    try {
+        const dictsUrl = 'https://cdn.jsdelivr.net/gh/your-username/school-assistant-pwa@main/dicts.json';
+        const response = await fetch(dictsUrl);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const jsonData = await response.text();
+        await importDictionariesFromJson(jsonData);
+        showSuccess('Словари успешно загружены с GitHub!');
+        await loadDictionaries();
+        paragraphBm25 = new ParagraphBM25();
+        await paragraphBm25.loadDictionaries();
+        allParagraphs.forEach(paragraph => paragraphBm25.addParagraph(paragraph));
+    } catch (error) {
+        console.error('Ошибка загрузки словарей:', error);
+        showError('Ошибка загрузки словарей: ' + error.message);
+    } finally {
+        hideLoadingInTab('dictionaries');
+    }
+}
+
+function showLoadingInTab(tabId, message) {
+    const container = document.getElementById(tabId);
+    if (!container) return;
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'alert alert-info';
+    loadingDiv.textContent = message;
+    container.querySelector('.tab-content')?.prepend(loadingDiv);
+}
+
+function hideLoadingInTab(tabId) {
+    const container = document.getElementById(tabId);
+    if (!container) return;
+    const loadingDiv = container.querySelector('.alert-info');
+    if (loadingDiv) loadingDiv.remove();
+}
+
+// === Голосовой поиск ===
+function startVoiceSearch() {
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'ru-RU';
+    recognition.start();
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById('searchQuery').value = transcript;
+        performSearch();
+    };
+    recognition.onerror = (event) => {
+        showError('Ошибка распознавания речи: ' + event.error);
+    };
+}
+
+// === Вспомогательные функции ===
+function highlightText(text, query) {
+    const queryTerms = query.toLowerCase().split(/\s+/);
+    let highlightedText = text;
+    queryTerms.forEach(term => {
+        const regex = new RegExp(term, 'gi');
+        highlightedText = highlightedText.replace(regex, match => `<span class="highlight">${match}</span>`);
+    });
+    return highlightedText;
+}
+
+function getLanguageName(code) {
+    const languages = {
+        'uz': 'Узбекский',
+        'en': 'Английский',
+        'ru': 'Русский'
+    };
+    return languages[code] || 'Неизвестный';
+}
+
+function showError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'alert alert-error';
+    errorDiv.textContent = message;
+    const activeTab = document.querySelector('.tab-content.active');
+    (activeTab || document.getElementById('results')).prepend(errorDiv);
+    setTimeout(() => errorDiv.remove(), 5000);
+}
+
+function showSuccess(message) {
+    const successDiv = document.createElement('div');
+    successDiv.className = 'alert alert-success';
+    successDiv.textContent = message;
+    const activeTab = document.querySelector('.tab-content.active');
+    (activeTab || document.getElementById('results')).prepend(successDiv);
+    setTimeout(() => successDiv.remove(), 5000);
+}
+
+// === Глобальные функции для HTML ===
+window.showFullParagraph = showFullParagraph;
+window.showBook = showBook;
+window.deleteParagraph = deleteParagraph;
+window.deleteBook = deleteBook;
+window.editDictEntry = editDictEntry;
+window.deleteDictEntry = deleteDictEntry;
+```
+
+---
+
+---
+
+## **📄 7. `styles.css`**
+```css
+:root {
+    /* Светлая тема */
+    --bg-color: #f5f5f5;
+    --container-bg: #ffffff;
+    --text-color: #333333;
+    --card-bg: #ffffff;
+    --primary-color: #4a6fa5;
+    --secondary-color: #3a5a8f;
+    --border-color: #e0e0e0;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    --highlight-bg: #ffeb3b;
+    --success-color: #4caf50;
+    --error-color: #f44336;
+    --subject-tag-bg: #4a6fa5;
+    --subject-tag-color: #ffffff;
+    --language-tag-bg: #6d8bb3;
+    --language-tag-color: #ffffff;
+    --info-color: #2196f3;
+}
+
+[data-theme="dark"] {
+    /* Тёмная тема */
+    --bg-color: #121212;
+    --container-bg: #1e1e1e;
+    --text-color: #f5f5f5;
+    --card-bg: #2d2d2d;
+    --primary-color: #6d8bb3;
+    --secondary-color: #5a7a9f;
+    --border-color: #404040;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    --highlight-bg: #ffd700;
+    --success-color: #66bb6a;
+    --error-color: #ef5350;
+    --subject-tag-bg: #6d8bb3;
+    --subject-tag-color: #ffffff;
+    --language-tag-bg: #5a7a9f;
+    --language-tag-color: #ffffff;
+    --info-color: #64b5f6;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    padding: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background-color: var(--container-bg);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.header-content h1 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.header-content p {
+    color: var(--text-color);
+    opacity: 0.7;
+}
+
+.theme-toggle {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+}
+
+/* Вкладки */
+.tabs {
+    display: flex;
+    gap: 5px;
+    margin: 20px 0;
+    border-bottom: 1px solid var(--border-color);
+    flex-wrap: wrap;
+}
+
+.tab-button {
+    padding: 10px 15px;
+    background-color: transparent;
+    color: var(--text-color);
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s;
+}
+
+.tab-button:hover {
+    background-color: var(--container-bg);
+}
+
+.tab-button.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Контролы */
+.controls, .books-controls, .dictionary-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.controls > div, .books-controls > div, .dictionary-controls > div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+    min-width: 200px;
+}
+
+.search-box {
+    flex-direction: row;
+    gap: 10px;
+}
+
+.search-box input {
+    flex: 1;
+}
+
+input[type="text"], select {
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: var(--container-bg);
+    color: var(--text-color);
+    transition: border 0.3s;
+}
+
+input[type="text"]:focus, select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+button {
+    padding: 10px 15px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: var(--secondary-color);
+}
+
+button:disabled {
+    background-color: var(--border-color);
+    cursor: not-allowed;
+}
+
+.btn-small {
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+.btn-delete {
+    background-color: var(--error-color);
+}
+
+.btn-delete:hover {
+    background-color: #d32f2f;
+}
+
+/* Результаты поиска */
+#results, #booksList, #dictionariesList {
+    margin-top: 20px;
+}
+
+.placeholder {
+    text-align: center;
+    color: var(--text-color);
+    opacity: 0.7;
+    padding: 20px;
+}
+
+.loading {
+    text-align: center;
+    padding: 20px;
+    font-size: 18px;
+}
+
+/* Карточки параграфов */
+.paragraph-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.paragraph-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.paragraph-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.paragraph-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.paragraph-title h3 {
+    margin: 0;
+    color: var(--primary-color);
+    font-size: 18px;
+}
+
+.subject-tag, .language-tag {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+.subject-tag {
+    background-color: var(--subject-tag-bg);
+    color: var(--subject-tag-color);
+}
+
+.language-tag {
+    background-color: var(--language-tag-bg);
+    color: var(--language-tag-color);
+}
+
+.paragraph-score {
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 14px;
+    background-color: var(--border-color);
+    padding: 3px 8px;
+    border-radius: 12px;
+}
+
+.paragraph-content {
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+.paragraph-content p {
+    margin: 0;
+}
+
+.paragraph-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+/* Карточки книг */
+#booksList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.book-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.book-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.book-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.book-card-title {
+    margin: 0;
+    color: var(--primary-color);
+    font-size: 18px;
+}
+
+.book-card-info {
+    margin-bottom: 10px;
+    color: var(--text-color);
+    opacity: 0.7;
+}
+
+.book-card-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+/* Словари */
+.dictionary-tabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    flex-wrap: wrap;
+}
+
+.dictionary-tab {
+    padding: 8px 12px;
+    background-color: transparent;
+    color: var(--text-color);
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.dictionary-tab:hover {
+    background-color: var(--container-bg);
+}
+
+.dictionary-tab.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.dictionary-entry {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dictionary-entry-content {
+    flex: 1;
+}
+
+.dictionary-entry-term {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.dictionary-entry-synonyms, .dictionary-entry-stem {
+    color: var(--text-color);
+    margin-top: 5px;
+    opacity: 0.8;
+}
+
+.dictionary-entry-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Подсветка найденных слов */
+.highlight {
+    background-color: var(--highlight-bg);
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+/* Модальные окна */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.modal-content {
+    background-color: var(--container-bg);
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.modal-large {
+    max-width: 1000px;
+}
+
+.modal h3 {
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: var(--container-bg);
+    color: var(--text-color);
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+/* Полный параграф */
+.paragraph-full-content, .book-paragraphs {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin: 15px 0;
+    padding: 15px;
+    background-color: var(--container-bg);
+    border-radius: 8px;
+    max-height: 500px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+}
+
+/* Параграфы в книге */
+.paragraph-card-in-book {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+}
+
+.paragraph-header-in-book {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.paragraph-number {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+.paragraph-content-in-book {
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.paragraph-content-in-book p {
+    margin: 0;
+}
+
+.paragraph-actions-in-book {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+/* Сообщения */
+.alert {
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    animation: fadeIn 0.3s;
+}
+
+.alert-success {
+    background-color: rgba(76, 175, 80, 0.2);
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
+}
+
+.alert-error {
+    background-color: rgba(244, 67, 54, 0.2);
+    color: var(--error-color);
+    border: 1px solid var(--error-color);
+}
+
+.alert-info {
+    background-color: rgba(33, 150, 243, 0.2);
+    color: var(--info-color);
+    border: 1px solid var(--info-color);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    .tabs, .dictionary-tabs {
+        flex-wrap: wrap;
+    }
+
+    .tab-button {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+
+    .dictionary-tab {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    .controls > div, .books-controls > div, .dictionary-controls > div {
+        min-width: 100%;
+    }
+
+    .search-box, .upload-box, .export-import-box {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .paragraph-header, .book-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .paragraph-actions, .book-card-actions, .dictionary-entry-actions {
+        justify-content: flex-start;
+    }
+
+    #booksList {
+        grid-template-columns: 1fr;
+    }
+}
+```
+
+---
+
+---
+
+## **📄 8. `dicts.json`**
+```json
+{
+  "books": [],
+  "subjects": [],
+  "paragraphs": [],
+  "synonyms": [
+    { "term": "фотосинтез", "synonyms": ["фотосинтез процесси", "ўсимликларнинг фотосинтези", "ўсимлик фотосинтези"], "language": "uz" },
+    { "term": "ўсимлик", "synonyms": ["ўсимликлар", "растение", "plant"], "language": "uz" },
+    { "term": "клетка", "synonyms": ["клеткалар", "хужайра", "cell"], "language": "uz" },
+    { "term": "митохондрия", "synonyms": ["митохондриялар", "энергия хужайраси"], "language": "uz" },
+    { "term": "fotosintez", "synonyms": ["fotosintez jarayoni", "o'simliklarning fotosintezi"], "language": "uz" },
+    { "term": "o'simlik", "synonyms": ["o'simliklar", "plant"], "language": "uz" },
+    { "term": "photosynthesis", "synonyms": ["photosynthetic process", "plant photosynthesis", "light synthesis"], "language": "en" },
+    { "term": "plant", "synonyms": ["vegetation", "flora", "green plant"], "language": "en" },
+    { "term": "cell", "synonyms": ["biological cell", "microorganism", "organism cell"], "language": "en" },
+    { "term": "mitochondria", "synonyms": ["mitochondrion", "powerhouse of the cell"], "language": "en" },
+    { "term": "фотосинтез", "synonyms": ["фотосинтетический процесс", "процесс фотосинтеза"], "language": "ru" },
+    { "term": "растение", "synonyms": ["растительность", "флора", "зеленое растение"], "language": "ru" },
+    { "term": "клетка", "synonyms": ["биологическая клетка", "клеточная структура"], "language": "ru" },
+    { "term": "митохондрия", "synonyms": ["митохондрии", "энергетическая станция клетки"], "language": "ru" }
+  ],
+  "stopwords": [
+    { "term": "бу", "language": "uz" },
+    { "term": "нимa", "language": "uz" },
+    { "term": "экан", "language": "uz" },
+    { "term": "ва", "language": "uz" },
+    { "term": "лекин", "language": "uz" },
+    { "term": "шунга", "language": "uz" },
+    { "term": "хам", "language": "uz" },
+    { "term": "да", "language": "uz" },
+    { "term": "йўк", "language": "uz" },
+    { "term": "билан", "language": "uz" },
+    { "term": "га", "language": "uz" },
+    { "term": "дан", "language": "uz" },
+    { "term": "бу", "language": "uz" },
+    { "term": "bu", "language": "uz" },
+    { "term": "nima", "language": "uz" },
+    { "term": "ekan", "language": "uz" },
+    { "term": "va", "language": "uz" },
+    { "term": "lekin", "language": "uz" },
+    { "term": "shunga", "language": "uz" },
+    { "term": "the", "language": "en" },
+    { "term": "a", "language": "en" },
+    { "term": "an", "language": "en" },
+    { "term": "in", "language": "en" },
+    { "term": "on", "language": "en" },
+    { "term": "at", "language": "en" },
+    { "term": "to", "language": "en" },
+    { "term": "for", "language": "en" },
+    { "term": "of", "language": "en" },
+    { "term": "and", "language": "en" },
+    { "term": "or", "language": "en" },
+    { "term": "is", "language": "en" },
+    { "term": "are", "language": "en" },
+    { "term": "was", "language": "en" },
+    { "term": "were", "language": "en" },
+    { "term": "be", "language": "en" },
+    { "term": "been", "language": "en" },
+    { "term": "being", "language": "en" },
+    { "term": "have", "language": "en" },
+    { "term": "has", "language": "en" },
+    { "term": "had", "language": "en" },
+    { "term": "do", "language": "en" },
+    { "term": "does", "language": "en" },
+    { "term": "did", "language": "en" },
+    { "term": "will", "language": "en" },
+    { "term": "would", "language": "en" },
+    { "term": "i", "language": "en" },
+    { "term": "you", "language": "en" },
+    { "term": "he", "language": "en" },
+    { "term": "she", "language": "en" },
+    { "term": "it", "language": "en" },
+    { "term": "we", "language": "en" },
+    { "term": "they", "language": "en" },
+    { "term": "и", "language": "ru" },
+    { "term": "в", "language": "ru" },
+    { "term": "не", "language": "ru" },
+    { "term": "на", "language": "ru" },
+    { "term": "я", "language": "ru" },
+    { "term": "что", "language": "ru" },
+    { "term": "то", "language": "ru" },
+    { "term": "он", "language": "ru" },
+    { "term": "с", "language": "ru" },
+    { "term": "а", "language": "ru" },
+    { "term": "за", "language": "ru" },
+    { "term": "к", "language": "ru" },
+    { "term": "у", "language": "ru" },
+    { "term": "о", "language": "ru" },
+    { "term": "по", "language": "ru" }
+  ],
+  "stemming_rules": [
+    { "term": "ўсимликлар", "stem": "ўсимлик", "language": "uz" },
+    { "term": "ўсимликларга", "stem": "ўсимлик", "language": "uz" },
+    { "term": "ўсимликларни", "stem": "ўсимлик", "language": "uz" },
+    { "term": "клеткалар", "stem": "клетка", "language": "uz" },
+    { "term": "клеткаларга", "stem": "клетка", "language": "uz" },
+    { "term": "фотосинтезлар", "stem": "фотосинтез", "language": "uz" },
+    { "term": "митохондриялар", "stem": "митохондрия", "language": "uz" },
+    { "term": "o'simliklar", "stem": "o'simlik", "language": "uz" },
+    { "term": "fotosintezlar", "stem": "fotosintez", "language": "uz" },
+    { "term": "photosyntheses", "stem": "photosynthes", "language": "en" },
+    { "term": "photosynthesizing", "stem": "photosynthes", "language": "en" },
+    { "term": "cells", "stem": "cell", "language": "en" },
+    { "term": "plants", "stem": "plant", "language": "en" },
+    { "term": "mitochondria", "stem": "mitochondrion", "language": "en" },
+    { "term": "растения", "stem": "растение", "language": "ru" },
+    { "term": "клетки", "stem": "клетка", "language": "ru" },
+    { "term": "митохондрии", "stem": "митохондрия", "language": "ru" }
+  ]
+}
+```
+
+---
+---
+---
+---
+## **📌 Инструкция по развёртыванию на GitHub Pages**
+
+1. **Создайте репозиторий** на GitHub (например, `school-assistant-pwa`).
+2. **Создайте папку `assets`** и добавьте туда иконки:
+   - `icon-192x192.png` (192×192)
+   - `icon-512x512.png` (512×512)
+3. **Загрузите все файлы** в ветку `main`:
+   - `index.html`
+   - `manifest.json`
+   - `sw.js`
+   - `db.js`
+   - `search.js`
+   - `app.js`
+   - `styles.css`
+   - `dicts.json`
+4. **Обновите ссылку в `app.js`** (замените `your-username` на ваше имя пользователя GitHub):
+   ```javascript
+   const dictsUrl = 'https://cdn.jsdelivr.net/gh/YOUR_USERNAME/school-assistant-pwa@main/dicts.json';
+   ```
+5. **Включите GitHub Pages**:
+   - Перейдите в **Settings → Pages**.
+   - Выберите ветку `main` и папку `/ (root)`.
+   - Нажмите **Save**.
+6. **Дождитесь развёртывания** (1-2 минуты).
+7. **Откройте приложение** по адресу:
+   ```
+   https://YOUR_USERNAME.github.io/school-assistant-pwa/
+   ```
+
+---
+---
+---
+## **🎯 Готово!**
+Теперь у вас есть **полноценное PWA-приложение** с:
+✅ **Работой на GitHub Pages**
+✅ **Тёмной/светлой темой**
+✅ **Карточками параграфов**
+✅ **Улучшенным поиском для узбекского и английского**
+✅ **Словарями как базой данных**
+✅ **Кнопкой "Загрузить с GitHub"**
+
+**Приложение полностью офлайн и не требует сервера!** 🚀
